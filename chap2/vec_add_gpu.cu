@@ -55,8 +55,12 @@ void vecadd_gpu(float *A_h, float *B_h, float *C_h, int N) {
   cudaMemcpy(A_d, A_h, size, cudaMemcpyHostToDevice);
   cudaMemcpy(B_d, B_h, size, cudaMemcpyHostToDevice);
 
+  // Mechanism to declare execution parameters more formally
+  dim3 threads(256, 1, 1);
+  dim3 blocks(ceil(N / 256.0), 1, 1);
+
   // The tripe quote thingy is an execution parameter
-  vec_add_kernal<<<ceil(N / 256.0), 256>>>(A_d, B_d, C_d, N);
+  vec_add_kernal<<<blocks, threads>>>(A_d, B_d, C_d, N);
 
   cudaMemcpy(C_h, C_d, size, cudaMemcpyDeviceToHost);
 
